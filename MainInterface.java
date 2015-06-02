@@ -3,6 +3,11 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Dingle on 02/06/2015.
@@ -20,9 +25,10 @@ public class MainInterface extends JFrame {
     JButton btnInputFile, btnOutputFile;
     JPanel pnlInputFile, pnlOutputFile, pnlFileSelector, pnlFolderExample,
             pnlMain, pnlSettings;
-    JTextArea txaProgress;
+    JTextArea txaProgress, txaMatches;
     JFileChooser inputChooser, outputChooser;
     JScrollPane scrollPaneExample, scrollPaneProgress, scrollPaneSettings;
+    List<List<File>> sortedLists;
 
 
     public MainInterface()
@@ -71,6 +77,7 @@ public class MainInterface extends JFrame {
                 if (inputChooser.showOpenDialog(getParent()) == JFileChooser.APPROVE_OPTION)
                 {
                     txtInputFile.setText(inputChooser.getSelectedFile().getAbsolutePath());
+                    createSortingNames(txtInputFile.getText());
                 }
 
 
@@ -171,6 +178,117 @@ public class MainInterface extends JFrame {
         add(scrollPaneProgress, BorderLayout.SOUTH);
 
 
+        return true;
+    }
+
+    public boolean addFilestoPanel(String directory)
+    {
+        File sortFolder = new File(directory);
+        File[] fileList = sortFolder.listFiles();
+        String file = "";
+        for (int i=0; i < fileList.length; i++)
+        {
+            //TODO Display Folders on panel
+        }
+
+        return true;
+    }
+
+    public boolean createSortingNames(String directory)
+    {
+        File sortFolder = new File(directory);
+        File[] fileList = sortFolder.listFiles();
+        String file = "";
+
+        List<Object> toRemove = new ArrayList<Object>();
+        List matches = new ArrayList();
+        sortedLists = new ArrayList<List<File>>();
+
+        for (int i=0; i < fileList.length; i++) {
+            //System.out.println(i);
+            if (fileList[i].isFile()) {
+                file = fileList[i].getName();
+                //System.out.println(file);
+                List<String> items = new ArrayList<String>(Arrays.asList(file.split("[_ ]")));
+                System.out.println(items);
+                //System.out.println(items.size());
+
+                if (items.size() > 1) {
+                    for (Iterator<String> iter = items.listIterator(); iter.hasNext(); ) {
+                        String x = iter.next();
+                        if (x.contains("[") || x.contains("{") || x.contains("(")) {
+                            //iter.remove();
+                            toRemove.add(x);
+                        }
+                    }
+                    items.removeAll(toRemove);
+                    //System.out.println(items);
+
+                    StringBuffer sb = new StringBuffer();
+                    boolean flag = true;
+                    for (int j=0; j < items.size(); j++)
+                    {
+
+                        if(items.get(j).equals("-"))
+                        {
+                            flag = false;
+                        } else if (flag) {
+                            sb.append(items.get(j) + " ");
+                        }
+
+                    }
+
+                    String displayString = sb.toString();
+
+                    if (sortedLists.size() == 0)
+                    {
+
+                        matches.add(displayString);
+                        List sortedFile = new ArrayList<File>();
+                        sortedFile.add(fileList[i]);
+                        sortedLists.add(sortedFile);
+                    }
+                    else
+                    {
+                        flag = false;
+                        for (int j=0; j < sortedLists.size(); j++)
+                        {
+                            if (displayString.equals(matches.get(j)))
+                            {
+                                flag = true;
+                                sortedLists.get(j).add(fileList[i]);
+                            }
+
+
+                        }
+                        if(!flag)
+                        {
+                            matches.add(displayString);
+                            List sortedFile = new ArrayList<File>();
+                            sortedFile.add(fileList[i]);
+                            sortedLists.add(sortedFile);
+                        }
+
+                    }
+
+                }
+            }
+        }
+        setMatches(matches);
+
+        return true;
+    }
+
+    public boolean setMatches(List matches)
+    {
+        txaMatches = new JTextArea();
+
+        for(int i=0; i<matches.size();i++)
+        {
+            txaMatches.append(matches.get(i) + "\n");
+        }
+
+        pnlSettings.add(txaMatches, BorderLayout.CENTER);
         return true;
     }
 }
