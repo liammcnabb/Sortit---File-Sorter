@@ -9,8 +9,8 @@ import java.awt.event.ActionListener;
  */
 public class MainInterface extends JFrame {
 
-    final String INPUT_FILE = "Input File:  ";
-    final String OUTPUT_FILE = "Output File:  ";
+    final String INPUT_FILE =   "Input File:    ";
+    final String OUTPUT_FILE =  "Output File: ";
     final String BROWSE_BUTTON = "...";
     Dimension defaultSize = new Dimension(800,600);
     Dimension buttonSize = new Dimension(35,20);
@@ -18,8 +18,11 @@ public class MainInterface extends JFrame {
     JLabel lblInputFile, lblOutputFile;
     JTextField txtInputFile, txtOutputFile;
     JButton btnInputFile, btnOutputFile;
-    JPanel pnlInputFile, pnlOutputFile, pnlFileSelector;
+    JPanel pnlInputFile, pnlOutputFile, pnlFileSelector, pnlFolderExample,
+            pnlMain, pnlSettings;
+    JTextArea txaProgress;
     JFileChooser inputChooser, outputChooser;
+    JScrollPane scrollPaneExample, scrollPaneProgress, scrollPaneSettings;
 
 
     public MainInterface()
@@ -35,10 +38,15 @@ public class MainInterface extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         pnlFileSelector = new JPanel();
-        pnlFileSelector.setPreferredSize(new Dimension(800,200));
+        pnlFileSelector.setPreferredSize(new Dimension(800,85));
         initInputFile();
         initOutputFile();
         add(pnlFileSelector, BorderLayout.NORTH);
+        pnlMain = new JPanel();
+        initExampleFolder();
+        initSettings();
+        add(pnlMain, BorderLayout.CENTER);
+        initProgress();
 
 
 
@@ -49,6 +57,8 @@ public class MainInterface extends JFrame {
     {
         lblInputFile = new JLabel();
         lblInputFile.setText(INPUT_FILE);
+        lblInputFile.setHorizontalAlignment(JLabel.RIGHT);
+        lblInputFile.setVerticalAlignment(JLabel.CENTER);
         txtInputFile = new JTextField(55);
 
         btnInputFile = new JButton();
@@ -82,6 +92,8 @@ public class MainInterface extends JFrame {
     {
         lblOutputFile = new JLabel();
         lblOutputFile.setText(OUTPUT_FILE);
+        lblOutputFile.setHorizontalAlignment(JLabel.RIGHT);
+        lblOutputFile.setVerticalAlignment(JLabel.CENTER);
         txtOutputFile = new JTextField(55);
 
         btnOutputFile = new JButton();
@@ -95,9 +107,6 @@ public class MainInterface extends JFrame {
                 {
                     txtOutputFile.setText(outputChooser.getSelectedFile().getAbsolutePath());
                 }
-
-
-
             }
         });
 
@@ -111,4 +120,57 @@ public class MainInterface extends JFrame {
         return true;
     }
 
+    public boolean initExampleFolder()
+    {
+        pnlFolderExample = new JPanel();
+        //pnlFolderExample.setPreferredSize(new Dimension(750,300));
+        pnlFolderExample.setBackground(Color.WHITE);
+        scrollPaneExample = new JScrollPane(pnlFolderExample)
+        {
+            public Dimension getPreferredSize() {
+                return new Dimension(550,300);
+            }
+        };
+
+        pnlMain.add(scrollPaneExample, BorderLayout.CENTER);
+
+
+        return true;
+    }
+
+    public boolean initSettings()
+    {
+        pnlSettings = new JPanel();
+        //pnlFolderExample.setPreferredSize(new Dimension(750,300));
+        pnlSettings.setBackground(Color.WHITE);
+        scrollPaneSettings = new JScrollPane(pnlSettings)
+        {
+            public Dimension getPreferredSize() {
+                return new Dimension(200,300);
+            }
+        };
+
+        pnlMain.add(scrollPaneSettings, BorderLayout.WEST);
+
+
+        return true;
+    }
+
+    public boolean initProgress()
+    {
+        txaProgress = new JTextArea();
+        //txaProgress.setPreferredSize(new Dimension(750,300));
+        txaProgress.setEnabled(false);
+        scrollPaneProgress = new JScrollPane(txaProgress)
+        {
+            public Dimension getPreferredSize() {
+                return new Dimension(750,150);
+            }
+        };
+
+        add(scrollPaneProgress, BorderLayout.SOUTH);
+
+
+        return true;
+    }
 }
