@@ -1,5 +1,3 @@
-import com.sun.javafx.sg.Border;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -30,7 +28,7 @@ public class MainInterface extends JFrame {
     JTextArea txaProgress, txaMatches;
     JFileChooser inputChooser, outputChooser;
     JScrollPane scrollPaneExample, scrollPaneProgress, scrollPaneSettings;
-    List<List<File>> sortedLists;
+    List<Match> sortedLists;
     List matches;
 
 
@@ -164,177 +162,175 @@ public class MainInterface extends JFrame {
         btnApply = new JButton();
         btnApply.setText("Apply");
         btnApply.addActionListener(new ActionListener() {
-                                       public void actionPerformed(ActionEvent evt) {
-                                            sort();
-                                       }
-                                   });
-
-
-                pnlMatches.add(scrollPaneSettings, BorderLayout.NORTH);
-                pnlMatches.add(btnApply, BorderLayout.SOUTH);
-                pnlMain.add(pnlMatches, BorderLayout.WEST);
-
-
-                return true;
+            public void actionPerformed(ActionEvent evt) {
+                sort();
             }
-
-            public boolean initProgress() {
-                txaProgress = new JTextArea();
-                //txaProgress.setPreferredSize(new Dimension(750,300));
-                txaProgress.setEnabled(false);
-                scrollPaneProgress = new JScrollPane(txaProgress) {
-                    public Dimension getPreferredSize() {
-                        return new Dimension(750, 150);
-                    }
-                };
-
-                add(scrollPaneProgress, BorderLayout.SOUTH);
+        });
 
 
-                return true;
-            }
-
-            public boolean addFilestoPanel(String directory) {
-                File sortFolder = new File(directory);
-                File[] fileList = sortFolder.listFiles();
-                String file = "";
-                for (int i = 0; i < fileList.length; i++) {
-                    //TODO Display Folders on panel
-                }
-
-                return true;
-            }
-
-            public boolean createSortingNames(String directory) {
-                File sortFolder = new File(directory);
-                File[] fileList = sortFolder.listFiles();
-                String file = "";
-
-                List<Object> toRemove = new ArrayList<Object>();
-                matches = new ArrayList();
-                sortedLists = new ArrayList<List<File>>();
-
-                for (int i = 0; i < fileList.length; i++) {
-                    //System.out.println(i);
-                    if (fileList[i].isFile()) {
-                        file = fileList[i].getName();
-                        //System.out.println(file);
-                        List<String> items = new ArrayList<String>(Arrays.asList(file.split("[_ ]")));
-                        System.out.println(items);
-                        //System.out.println(items.size());
-
-                        if (items.size() > 1) {
-                            for (Iterator<String> iter = items.listIterator(); iter.hasNext(); ) {
-                                String x = iter.next();
-                                if (x.contains("[") || x.contains("{") || x.contains("(")) {
-                                    //iter.remove();
-                                    toRemove.add(x);
-                                }
-                            }
-                            items.removeAll(toRemove);
-                            //System.out.println(items);
-
-                            StringBuffer sb = new StringBuffer();
-                            boolean flag = true;
-                            for (int j = 0; j < items.size(); j++) {
-
-                                if (items.get(j).equals("-")) {
-                                    if (items.get(j + 1).contains("c") || items.get(j + 1).contains("v")) {
-                                        for (int k = 0; k < 10; k++) {
-                                            if (items.get(j + 1).contains(Integer.toString(k))) {
-                                                flag = false;
-                                            }
-                                        }
-                                    }
-                                } else if (items.get(j).contains("c") || items.get(j).contains("v")) {
-                                    for (int k = 0; k < 10; k++) {
-                                        if (items.get(j).contains(Integer.toString(k))) {
-                                            flag = false;
-                                        }
-                                    }
-                                } else if (items.get(j).contains("chapter") || items.get(j).contains("Chapter")) {
-                                    flag = false;
-                                } else if (flag) {
-                                    sb.append(items.get(j) + " ");
-                                }
-
-                            }
-
-                            String displayString = sb.toString().trim();
-
-                            if (sortedLists.size() == 0) {
-
-                                matches.add(displayString);
-                                List sortedFile = new ArrayList<File>();
-                                sortedFile.add(fileList[i]);
-                                sortedLists.add(sortedFile);
-                            } else {
-                                flag = false;
-                                for (int j = 0; j < sortedLists.size(); j++) {
-                                    if (displayString.equals(matches.get(j))) {
-                                        flag = true;
-                                        sortedLists.get(j).add(fileList[i]);
-                                    }
+        pnlMatches.add(scrollPaneSettings, BorderLayout.NORTH);
+        pnlMatches.add(btnApply, BorderLayout.SOUTH);
+        pnlMain.add(pnlMatches, BorderLayout.WEST);
 
 
-                                }
-                                if (!flag) {
-                                    matches.add(displayString);
-                                    List sortedFile = new ArrayList<File>();
-                                    sortedFile.add(fileList[i]);
-                                    sortedLists.add(sortedFile);
-                                }
-
-                            }
-
-                        }
-                    }
-                }
-                setMatches(matches);
-
-                return true;
-            }
-
-            public boolean setMatches(List matches) {
-                txaMatches = new JTextArea();
-
-                for (int i = 0; i < matches.size(); i++) {
-                    txaMatches.append("(" + sortedLists.get(i).size() + ")--" + matches.get(i) + "\n");
-                }
-
-                pnlSettings.add(txaMatches, BorderLayout.NORTH);
-                pnlSettings.updateUI();
-                return true;
-            }
-
-        public boolean sort()
-        {
-            File outputFolder = new File(txtOutputFile.getText());
-            File[] outputDirectories = outputFolder.listFiles();
-            boolean flag= false;
-            for(int i=0; i<sortedLists.size(); i++)
-            {
-                for(int j=0; j <outputDirectories.length; j++)
-                {
-                    System.out.println(matches.get(i));
-                    System.out.println(outputDirectories[j].getName());
-                    if(matches.get(i).equals(outputDirectories[j].getName()))
-                    {
-                        for(int k=0; k<sortedLists.get(i).size(); k++)
-                        {
-                            sortedLists.get(i).get(k).renameTo(new File(txtOutputFile.getText()
-                                    +"/"+ outputDirectories[j].getName() +"/"+ sortedLists.get(i).get(k).getName()));
-
-                            txaProgress.append(sortedLists.get(i).get(k).getName()
-                            + ": was moved to folder '" + outputDirectories[j].getName() +"'\n");
-
-                            txaProgress.updateUI();
-                        }
-                    }
-                }
-            }
-
-
-            return true;
-        }
+        return true;
     }
+
+    public boolean initProgress() {
+        txaProgress = new JTextArea();
+        //txaProgress.setPreferredSize(new Dimension(750,300));
+        txaProgress.setEnabled(false);
+        scrollPaneProgress = new JScrollPane(txaProgress) {
+            public Dimension getPreferredSize() {
+                return new Dimension(750, 150);
+            }
+        };
+
+        add(scrollPaneProgress, BorderLayout.SOUTH);
+
+
+        return true;
+    }
+
+    public boolean addFilestoPanel(String directory) {
+        File sortFolder = new File(directory);
+        File[] fileList = sortFolder.listFiles();
+        String file = "";
+        for (int i = 0; i < fileList.length; i++) {
+            //TODO Display Folders on panel
+        }
+
+        return true;
+    }
+
+    public boolean createSortingNames(String directory) {
+        File sortFolder = new File(directory);
+        File[] fileList = sortFolder.listFiles();
+        String file = "";
+
+        List<Object> toRemove = new ArrayList<Object>();
+        matches = new ArrayList();
+        sortedLists = new ArrayList<Match>();
+
+        for (int i = 0; i < fileList.length; i++) {
+            //System.out.println(i);
+            if (fileList[i].isFile()) {
+                file = fileList[i].getName();
+                //System.out.println(file);
+                List<String> items = new ArrayList<String>(Arrays.asList(file.split("[_ ]")));
+                System.out.println(items);
+                //System.out.println(items.size());
+
+                if (items.size() > 1) {
+                    for (Iterator<String> iter = items.listIterator(); iter.hasNext(); ) {
+                        String x = iter.next();
+                        if (x.contains("[") || x.contains("{") || x.contains("(")) {
+                            //iter.remove();
+                            toRemove.add(x);
+                        }
+                    }
+                    items.removeAll(toRemove);
+
+
+                    StringBuffer sb = new StringBuffer();
+                    boolean flag = true;
+                    for (int j = 0; j < items.size(); j++) {
+
+                        if (items.get(j).equals("-")) {
+                            if (items.get(j + 1).contains("c") || items.get(j + 1).contains("v")) {
+                                for (int k = 0; k < 10; k++) {
+                                    if (items.get(j + 1).contains(Integer.toString(k))) {
+                                        flag = false;
+                                    }
+                                }
+                            }
+                        } else if (items.get(j).contains("c") || items.get(j).contains("v")) {
+                            for (int k = 0; k < 10; k++) {
+                                if (items.get(j).contains(Integer.toString(k))) {
+                                    flag = false;
+                                }
+                            }
+                        } else if (items.get(j).contains("chapter") || items.get(j).contains("Chapter")) {
+                            flag = false;
+                        } else if (flag) {
+                            sb.append(items.get(j) + " ");
+                        }
+
+                    }
+
+                    String displayString = sb.toString().trim();
+
+                    if (sortedLists.size() == 0) {
+                        Match match = new Match(displayString,fileList[i]);
+                        //matches.add(displayString);
+                        sortedLists.add(match);
+                    } else {
+                        flag = false;
+                        for (int j = 0; j < sortedLists.size(); j++) {
+                            if (displayString.equals(sortedLists.get(j).getTitle())) {
+                                flag = true;
+                                sortedLists.get(j).addFile(fileList[i]);
+                            }
+
+
+                        }
+                        if (!flag) {
+                            Match match = new Match(displayString,fileList[i]);
+                            sortedLists.add(match);
+                        }
+
+                    }
+
+                }
+            }
+        }
+        setMatches();
+
+        return true;
+    }
+
+    public boolean setMatches() {
+        txaMatches = new JTextArea();
+
+        for (int i = 0; i < sortedLists.size(); i++) {
+            txaMatches.append("(" + sortedLists.get(i).getMatchedFiles().size() +
+                    ") -" + sortedLists.get(i).getTitle() + "\n");
+        }
+
+        pnlSettings.add(txaMatches, BorderLayout.NORTH);
+        pnlSettings.updateUI();
+        return true;
+    }
+
+    public boolean sort()
+    {
+        File outputFolder = new File(txtOutputFile.getText());
+        File[] outputDirectories = outputFolder.listFiles();
+        boolean flag= false;
+        for(int i=0; i<sortedLists.size(); i++)
+        {
+            for(int j=0; j <outputDirectories.length; j++)
+            {
+                System.out.println(sortedLists.get(i).getTitle());
+                System.out.println(outputDirectories[j].getName());
+                if(sortedLists.get(i).getTitle().equals(outputDirectories[j].getName()))
+                {
+                    for(int k=0; k<sortedLists.get(i).getMatchedFiles().size(); k++)
+                    {
+                        sortedLists.get(i).getMatchedFiles().get(k).renameTo(new File(txtOutputFile.getText()
+                                +"/"+ outputDirectories[j].getName() +"/"+
+                                sortedLists.get(i).getMatchedFiles().get(k).getName()));
+
+                        txaProgress.append(sortedLists.get(i).getMatchedFiles().get(k).getName()
+                                + ": was moved to folder '" + outputDirectories[j].getName() +"'\n");
+
+                        txaProgress.updateUI();
+                    }
+                }
+            }
+        }
+
+
+        return true;
+    }
+}
