@@ -333,40 +333,7 @@ public class MainInterface extends JFrame {
                     }
                 }
             }
-            /**if (matchList.size() == 1) {
-                fileList[i].renameTo(new File(ongoingFolder +"/"+ matchList.get(0) +"/"+ fileList[i].getName()));
 
-
-                outputList.append(file+" was moved to the "+ matchList.get(0) +" folder. \n");
-                System.out.println(fileList.length);
-                flag = true;
-            } else if (matchList.size() > 1) {
-                int[] match = new int[matchList.size()];
-                int best = -1;
-                int folder = 0;
-
-                for (int z=0; z < matchList.size(); z++) {
-                    match[z]=0;
-                    List<String> folderString = new ArrayList<String>(Arrays.asList(matchList.get(z).split(" ")));
-                    for (int a = 0; a< folderString.size(); a++) {
-                        for (int b =0; b< items.size();b++) {
-                            if (folderString.get(a).equals(items.get(b))) {
-                                match[z]++;
-                            }
-                        }
-                    }
-                    if (match[z]> best) {
-                        best = match[z];
-                        folder = z;
-
-                    }
-                }
-                fileList[i].renameTo(new File(ongoingFolder +"/"+ matchList.get(folder) +"/"+ fileList[i].getName()));
-                i--;
-
-                outputList.append(file+" was moved to the "+ matchList.get(folder) +" folder. \n");
-                System.out.println(fileList.length);
-                flag = true;**/
 
             return true;
         }
